@@ -37,7 +37,7 @@ function checkModules ($moduleName, $majorVer, $minorVer ) {
         Write-Host $_.Exception.Message -ForegroundColor Red
     }
 }
-checkModules 'GuestConfiguration' 1 2
+checkModules 'GuestConfiguration' 1 20
 checkModules 'Az' 3 7
 checkModules 'PSDscResources' 2 12
 checkModules 'AuditPolicyDSC' 1 4
