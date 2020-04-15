@@ -33,11 +33,11 @@ function checkModules ($moduleName, $majorVer, $minorVer ) {
             throw [System.ApplicationException] "$moduleName module not found or below verson $majorVer.$minorVer.x"
         }
     }
-    catch {
-        Write-Host $_.Exception.Message -ForegroundColor Red
+    catch [System.ApplicationException] {
+        Write-Error $_.Exception.Message -ErrorAction 'Stop'
     }
 }
-checkModules 'GuestConfiguration' 1 2
+checkModules 'GuestConfiguration' 1 20
 checkModules 'Az' 3 7
 checkModules 'PSDscResources' 2 12
 checkModules 'AuditPolicyDSC' 1 4
@@ -53,11 +53,11 @@ function checkPrereq {
     catch {
 
         Write-Host "Please enter a valid Resource Group, Storage Account and Storage Container." -ForegroundColor Yellow
-        Write-Host $_.Exception.Message -ForegroundColor Red
-        exit
+        Write-Error $_.Exception.Message -ErrorAction 'Stop'
     }
 }
 checkPrereq
+
 
 # Complile the DSC MOF to use with Azure Policy. This will check for the presence of local audit policy and registy key settings.
 Configuration Audit_ASC_VM_Config
@@ -152,9 +152,8 @@ catch
 {
     Write-Host "==================="
     Write-Host "Error uploading to storage account" -ForegroundColor Red
-    write-host "ERROR: $_.Exception.Message" -ForegroundColor Red
+    Write-Error $_.Exception.Message -ErrorAction 'Stop'
     Write-Host "==================="
-    exit
 }
 # Wait some time to avoid failures
 Write-Host "Waiting for 15 secs to avoid failures...."
@@ -173,8 +172,6 @@ New-GuestConfigurationPolicy `
 # Publish policy to chosen Mananagement Group
 try
 {
-    Write-Host "Waiting for 15 secs to avoid failures...."
-    Start-Sleep -Seconds 15
     Publish-GuestConfigurationPolicy -Path .\policyDefinitions -ManagementGroupName $managementGroup
 }
 catch
@@ -183,7 +180,6 @@ catch
     Write-Host "Please provide a valid Management Group with enough privileges to publish policy" -ForegroundColor Red
     Write-Host "Management Group: " -NoNewline
     Write-Host $managementGroup -ForegroundColor Yellow
-    write-host "ERROR: $_.Exception.Message" -ForegroundColor Red
+    Write-Error $_.Exception.Message -ErrorAction 'Stop'
     Write-Host "==================="
-    exit
 }
