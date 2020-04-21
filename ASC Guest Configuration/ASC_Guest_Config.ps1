@@ -58,40 +58,43 @@ function checkPrereq {
 }
 checkPrereq
 
-
 # Complile the DSC MOF to use with Azure Policy. This will check for the presence of local audit policy and registy key settings.
-Configuration Audit_ASC_VM_Config
-{
-    Import-DscResource -ModuleName 'PSDscResources'
-    Import-DscResource -ModuleName 'AuditPolicyDsc'
-
-    Node Audit_ASC_VM_Config
+$guestConfigDSC = @'
+    Configuration Audit_ASC_VM_Config
     {
-        AuditPolicyGuid ProccessCreationNoAuditing
+        Import-DscResource -ModuleName 'PSDscResources'
+        Import-DscResource -ModuleName 'AuditPolicyDsc'
+    
+        Node Audit_ASC_VM_Config
         {
-            Name      = 'Process Creation'
-            AuditFlag = 'No Auditing'
-            Ensure    = 'Absent'
-        }
-
-        AuditPolicyGuid ProccessCreationFailure
-        {
-            Name      = 'Process Creation'
-            AuditFlag = 'Failure'
-            Ensure    = 'Absent'
-        }
-
-        Registry IncludeCmdLine
-        {
-            Ensure      = 'Present'
-            Key         = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\Audit'
-            ValueName   = 'ProcessCreationIncludeCmdLine_Enabled'
-            ValueType   = 'DWord'
-            ValueData   = 1
+            AuditPolicyGuid ProccessCreationNoAuditing
+            {
+                Name      = 'Process Creation'
+                AuditFlag = 'No Auditing'
+                Ensure    = 'Absent'
+            }
+    
+            AuditPolicyGuid ProccessCreationFailure
+            {
+                Name      = 'Process Creation'
+                AuditFlag = 'Failure'
+                Ensure    = 'Absent'
+            }
+    
+            Registry IncludeCmdLine
+            {
+                Ensure      = 'Present'
+                Key         = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\Audit'
+                ValueName   = 'ProcessCreationIncludeCmdLine_Enabled'
+                ValueType   = 'DWord'
+                ValueData   = 1
+            }
         }
     }
-}
-Audit_ASC_VM_Config -OutputPath ./Config
+    Audit_ASC_VM_Config -OutputPath ./Config
+'@
+Invoke-Expression $guestConfigDSC
+
 
 # Create a new Guest Config. Package based on compiled MOF.
 New-GuestConfigurationPackage -Name 'Audit_ASC_VM_Config' -Configuration './Config/Audit_ASC_VM_Config.MOF'
@@ -99,12 +102,6 @@ New-GuestConfigurationPackage -Name 'Audit_ASC_VM_Config' -Configuration './Conf
 # Upload the Guest Config. Package to blob storage.
 function publish {
     param(
-    [Parameter(Mandatory=$true)]
-    $resourceGroup,
-    [Parameter(Mandatory=$true)]
-    $storageAccountName,
-    [Parameter(Mandatory=$true)]
-    $storageContainerName,
     [Parameter(Mandatory=$true)]
     $filePath,
     [Parameter(Mandatory=$true)]
