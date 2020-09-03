@@ -1,0 +1,21 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "storageaccount_name": {
+            "value": "[uniqueString(resourceGroup().id)]"
+        },
+        "storageaccount_container_name": {
+            "value": "files"
+        },
+        "logicapp_name": {
+            "value": "logicapp-named-locations"
+        },
+        "csv_filename": {
+            "value": "ipranges.csv"
+        },
+        "logicapp_storage_connector_name": {
+            "value": "azureblob"
+        }
+    }
+}
