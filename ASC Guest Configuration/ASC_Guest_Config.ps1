@@ -20,27 +20,10 @@ param(
     [string]$managementGroup
 )
 
-function checkModules ($moduleName, $majorVer, $minorVer ) {
-
-    try{
-        $psModule = (get-module -ListAvailable -Name $moduleName).Version
-        if(($psModule.Major -ge $majorVer) -and ($psModule.Minor -ge $minorVer))
-        {
-            Write-Host "$moduleName module found."
-        }
-        else
-        {
-            throw [System.ApplicationException] "$moduleName module not found or below verson $majorVer.$minorVer.x"
-        }
-    }
-    catch [System.ApplicationException] {
-        Write-Error $_.Exception.Message -ErrorAction 'Stop'
-    }
-}
-checkModules 'GuestConfiguration' 1 20
-checkModules 'Az' 3 7
-checkModules 'PSDscResources' 2 12
-checkModules 'AuditPolicyDSC' 1 4
+Install-Module -Name GuestConfiguration
+Install-Module -Name Az
+Install-Module -Name PSDscResources
+Install-Module -Name AuditPolicyDSC
 
 function checkPrereq {
 
