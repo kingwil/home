@@ -336,13 +336,13 @@
                         "Name": "Credential",
                         "Value": {
                             "UserName": "[parameters('AdminUser')]",
-                            "Password": "PrivateSettingsRef:adminPassword"
+                            "Password": "PrivateSettingsRef:AdminPassword"
                         },
                         "TypeName": "System.Management.Automation.PSCredential"
 
                     },
                     "protectedSettings": {
-                        "AdminUser": "[parameters('AdminPassword')]"
+                        "AdminPassword": "[parameters('AdminPassword')]"
                     }
                 }
             }
