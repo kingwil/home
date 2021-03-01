@@ -27,7 +27,7 @@
     "variables": {
         "networkInterfaces_srv_dc1_name": "srv-dc1-nic",
         "virtualMachines_Srv_DC1_name": "Srv-DC1",
-        "virtualNetworks_Test_FW_VN_name": "Test-FW-VN"
+        "virtualNetworks_name": "Test-VNET"
 
     },
     "resources": [
@@ -37,7 +37,7 @@
             "name": "[variables('networkInterfaces_srv_dc1_name')]",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworks_Test_FW_VN_name'), 'Workload-SN')]"
+                "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworks_name'), 'Workload-SN')]"
             ],
             "properties": {
                 "ipConfigurations": [
@@ -47,7 +47,7 @@
                             "privateIPAddress": "10.0.2.5",
                             "privateIPAllocationMethod": "Static",
                             "subnet": {
-                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworks_Test_FW_VN_name'), 'Workload-SN')]"
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworks_name'), 'Workload-SN')]"
                             },
                             "primary": true,
                             "privateIPAddressVersion": "IPv4"
@@ -109,7 +109,7 @@
         {
             "type": "Microsoft.Network/virtualNetworks",
             "apiVersion": "2020-04-01",
-            "name": "[variables('virtualNetworks_Test_FW_VN_name')]",
+            "name": "[variables('virtualNetworks_name')]",
             "location": "[resourceGroup().location]",
             "dependsOn": [],
             "properties": {
