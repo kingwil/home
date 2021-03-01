@@ -1,12 +1,15 @@
 Configuration config-adds
 {
+    param(
+        [Parameter(Mandatory=$true)]
+        [ValidateNotNullorEmpty()]
+        [PSCredential]
+        $Credential
+    )
 
     Import-DscResource -ModuleName PSDesiredStateConfiguration
     Import-DscResource -ModuleName ActiveDirectoryDsc
 
-    $Credential = Get-AutomationPSCredential 'Credential'
-    $SafeModePassword = Get-AutomationPSCredential 'Credential'
-    
     node 'localhost'
     {
         WindowsFeature 'ADDS'
@@ -25,7 +28,7 @@ Configuration config-adds
         {
             DomainName                    = 'contoso.com'
             Credential                    = $Credential
-            SafemodeAdministratorPassword = $SafeModePassword
+            SafemodeAdministratorPassword = $Credential
             ForestMode                    = 'WinThreshold'
         }
 
