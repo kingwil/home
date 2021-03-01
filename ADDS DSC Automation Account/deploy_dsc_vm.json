@@ -37,7 +37,7 @@
             "name": "[variables('networkInterfaces_srv_dc1_name')]",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworks_name'), 'Workload-SN')]"
+                "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworks_name'))]"
             ],
             "properties": {
                 "ipConfigurations": [
