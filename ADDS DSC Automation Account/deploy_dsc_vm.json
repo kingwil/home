@@ -25,108 +25,12 @@
         }
     },
     "variables": {
-
-        "bastionHosts_Bastion_Firewall_name": "Bastion-Firewall",
         "networkInterfaces_srv_dc1_name": "srv-dc1-nic",
-        "publicIPAddresses_Bastion_Firewall_IP_name": "Bastion-Firewall-IP",
         "virtualMachines_Srv_DC1_name": "Srv-DC1",
-        "virtualNetworks_Test_FW_VN_name": "Test-FW-VN",
-        "workspaces_Sentinel_name": "[concat( 'asbp-', uniqueString(resourceGroup().id) )]"
+        "virtualNetworks_Test_FW_VN_name": "Test-FW-VN"
+
     },
     "resources": [
-        {
-            "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(variables('virtualMachines_Srv_DC1_name'), '/MicrosoftMonitoringAgent')]",
-            "apiVersion": "2019-07-01",
-            "location": "[resourceGroup().location]",
-            "dependsOn": [
-                "[resourceId('Microsoft.OperationalInsights/workspaces', variables('workspaces_Sentinel_name'))]",
-                "[resourceId('Microsoft.Compute/virtualMachines', variables('virtualMachines_Srv_DC1_name'))]"
-            ],
-            "properties": {
-                "publisher": "Microsoft.EnterpriseCloud.Monitoring",
-                "type": "MicrosoftMonitoringAgent",
-                "typeHandlerVersion": "1.0",
-                "autoUpgradeMinorVersion": true,
-                "settings": {
-                    "workspaceId": "[reference(resourceId('Microsoft.OperationalInsights/workspaces', variables('workspaces_Sentinel_name')), '2015-03-20').customerId]",
-                    "stopOnMultipleConnections": "true"
-                },
-                "protectedSettings": {
-                    "workspaceKey": "[listKeys(resourceId('Microsoft.OperationalInsights/workspaces', variables('workspaces_Sentinel_name')), '2020-10-01').primarySharedKey]"
-                }
-            }
-        },
-        {
-            "type": "Microsoft.Network/virtualNetworks/subnets",
-            "apiVersion": "2020-04-01",
-            "name": "[concat(variables('virtualNetworks_Test_FW_VN_name'), '/AzureBastionSubnet')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworks_Test_FW_VN_name'))]"
-            ],
-            "properties": {
-                "addressPrefix": "10.0.5.0/24",
-                "delegations": [],
-                "privateEndpointNetworkPolicies": "Enabled",
-                "privateLinkServiceNetworkPolicies": "Enabled"
-            }
-        },
-        {
-            "type": "Microsoft.Network/virtualNetworks/subnets",
-            "apiVersion": "2020-04-01",
-            "name": "[concat(variables('virtualNetworks_Test_FW_VN_name'), '/AzureFirewallSubnet')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworks_Test_FW_VN_name'))]"
-            ],
-            "properties": {
-                "addressPrefix": "10.0.1.0/24",
-                "delegations": [
-                ],
-                "privateEndpointNetworkPolicies": "Enabled",
-                "privateLinkServiceNetworkPolicies": "Enabled"
-            }
-        },
-        {
-            "type": "Microsoft.Network/virtualNetworks/subnets",
-            "apiVersion": "2020-04-01",
-            "name": "[concat(variables('virtualNetworks_Test_FW_VN_name'), '/Workload-SN')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworks_Test_FW_VN_name'))]"
-            ],
-            "properties": {
-                "addressPrefix": "10.0.2.0/24",
-                "delegations": [],
-                "privateEndpointNetworkPolicies": "Enabled",
-                "privateLinkServiceNetworkPolicies": "Enabled"
-            }
-        },
-        {
-            "type": "Microsoft.Network/bastionHosts",
-            "apiVersion": "2020-04-01",
-            "name": "[variables('bastionHosts_Bastion_Firewall_name')]",
-            "location": "[resourceGroup().location]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddresses_Bastion_Firewall_IP_name'))]",
-                "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworks_Test_FW_VN_name'), 'AzureBastionSubnet')]"
-            ],
-            "properties": {
-                "ipConfigurations": [
-                    {
-                        "name": "IpConf",
-                        "properties": {
-                            "privateIPAllocationMethod": "Dynamic",
-                            "publicIPAddress": {
-                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('publicIPAddresses_Bastion_Firewall_IP_name'))]"
-                            },
-                            "subnet": {
-                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworks_Test_FW_VN_name'), 'AzureBastionSubnet')]"
-                            }
-                        }
-                    }
-                ]
-            }
-        },
-
         {
             "type": "Microsoft.Network/networkInterfaces",
             "apiVersion": "2020-04-01",
@@ -152,20 +56,6 @@
                 ],
                 "enableAcceleratedNetworking": false,
                 "enableIPForwarding": false
-            }
-        },
-        {
-            "type": "Microsoft.Network/publicIPAddresses",
-            "apiVersion": "2020-04-01",
-            "name": "[variables('publicIPAddresses_Bastion_Firewall_IP_name')]",
-            "location": "[resourceGroup().location]",
-            "sku": {
-                "name": "Standard"
-            },
-            "properties": {
-                "publicIPAddressVersion": "IPv4",
-                "publicIPAllocationMethod": "Static",
-                "idleTimeoutInMinutes": 4
             }
         },
         {
@@ -237,83 +127,11 @@
                             "privateEndpointNetworkPolicies": "Enabled",
                             "privateLinkServiceNetworkPolicies": "Enabled"
                         }
-                    },
-                    {
-                        "name": "AzureBastionSubnet",
-                        "properties": {
-                            "addressPrefix": "10.0.5.0/24",
-                            "delegations": [],
-                            "privateEndpointNetworkPolicies": "Enabled",
-                            "privateLinkServiceNetworkPolicies": "Enabled"
-                        }
                     }
                 ],
                 "virtualNetworkPeerings": [],
                 "enableDdosProtection": false,
                 "enableVmProtection": false
-            }
-        },
-        {
-            "name": "[variables('workspaces_Sentinel_name')]",
-            "type": "Microsoft.OperationalInsights/workspaces",
-            "apiVersion": "2020-10-01",
-            "location": "[resourceGroup().location]",
-            "properties": {
-                "sku": {
-                    "name": "PerGB2018"
-                }
-            },
-            "resources": [
-                {
-                    "type": "Microsoft.OperationalInsights/workspaces/dataSources",
-                    "apiVersion": "2020-03-01-preview",
-                    "location": "[resourceGroup().location]",
-                    "name": "[concat(variables('workspaces_Sentinel_name'), '/SecurityInsightsSecurityEventCollectionConfiguration')]",
-                    "kind": "SecurityInsightsSecurityEventCollectionConfiguration",
-                    "dependsOn": [
-                        "[resourceId('Microsoft.OperationalInsights/workspaces', variables('workspaces_Sentinel_name'))]"
-                    ],
-                    "properties": {
-                        "tier": "All",
-                        "tierSetMethod": "Custom"
-                    }
-                }
-            ]
-        },
-        {
-            "name": "[concat('SecurityInsights', '(', variables('workspaces_Sentinel_name'), ')')]",
-            "type": "Microsoft.OperationsManagement/solutions",
-            "apiVersion": "2015-11-01-preview",
-            "location": "[resourceGroup().location]",
-            "plan": {
-                "name": "[concat('SecurityInsights', '(', variables('workspaces_Sentinel_name'), ')')]",
-                "product": "OMSGallery/SecurityInsights",
-                "publisher": "Microsoft",
-                "promotionCode": ""
-            },
-            "dependsOn": [
-                "[resourceId('Microsoft.OperationalInsights/workspaces/', variables('workspaces_Sentinel_name'))]"
-            ],
-            "properties": {
-                "workspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces', variables('workspaces_Sentinel_name'))]"
-            }
-        },
-        {
-            "name": "[concat('Security', '(', variables('workspaces_Sentinel_name'), ')')]",
-            "type": "Microsoft.OperationsManagement/solutions",
-            "apiVersion": "2015-11-01-preview",
-            "location": "[resourceGroup().location]",
-            "plan": {
-                "name": "[concat('Security', '(', variables('workspaces_Sentinel_name'), ')')]",
-                "product": "OMSGallery/Security",
-                "publisher": "Microsoft",
-                "promotionCode": ""
-            },
-            "dependsOn": [
-                "[resourceId('Microsoft.OperationalInsights/workspaces/', variables('workspaces_Sentinel_name'))]"
-            ],
-            "properties": {
-                "workspaceResourceId": "[resourceId('Microsoft.OperationalInsights/workspaces', variables('workspaces_Sentinel_name'))]"
             }
         },
         {
@@ -338,7 +156,7 @@
                             "UserName": "[parameters('AdminUser')]",
                             "Password": "PrivateSettingsRef:AdminPassword"
                         },
-                        "TypeName": "System.Management.Automation.PSCredential"
+                        "TypeName": "System.Management.Autioomatn.PSCredential"
 
                     },
                     "protectedSettings": {
