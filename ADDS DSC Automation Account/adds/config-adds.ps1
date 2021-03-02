@@ -9,6 +9,7 @@ Configuration config-adds
 
     Import-DscResource -ModuleName PSDesiredStateConfiguration
     Import-DscResource -ModuleName ActiveDirectoryDsc
+    Import-DscResource -ModuleName ComputerManagementDsc
 
     node 'localhost'
     {
@@ -205,6 +206,11 @@ Configuration config-adds
             PasswordNeverResets = $true
             DomainName          = 'contoso.com'
             Path                = 'OU=AAD Sync Users,DC=contoso,DC=com'
+        }
+
+        PendingReboot RebootAfterDomainJoin
+        {
+            Name = 'DomainJoin'
         }
 
     }
