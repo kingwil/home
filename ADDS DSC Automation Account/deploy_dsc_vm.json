@@ -168,17 +168,14 @@
                         "function": "config-adds",
                         "protectedSettings": {
                             "configurationArguments": {
-                                "Name": "Credential",
-                                "Value": {
+                                "Credential": {
                                     "userName": "[parameters('AdminUser')]",
                                     "password": "[parameters('AdminPassword')]"
-                                },
-                                "TypeName": "System.Management.Automation.PSCredential"
+                                }
                             }
                         }
                     }
                 }
-
             }
         }
     ],
