@@ -172,6 +172,10 @@
                                     "userName": "[parameters('AdminUser')]",
                                     "password": "[parameters('AdminPassword')]"
                                 }
+                            },
+                            "Credential": {
+                                "userName": "[parameters('AdminUser')]",
+                                "password": "[parameters('AdminPassword')]"
                             }
                         }
                     }
