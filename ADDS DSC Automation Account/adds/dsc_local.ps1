@@ -1,7 +1,20 @@
+[DSCLocalConfigurationManager()]
+configuration LCMConfig
+{
+    Node localhost
+    {
+        Settings
+        {
+            ActionAfterReboot = 'ContinueConfiguration'
+            RebootNodeIfNeeded = $true
+        }
+    }
+}
+
 Configuration config-adds
 {
     param(
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [ValidateNotNullorEmpty()]
         [PSCredential]
         $Credential
@@ -12,50 +25,43 @@ Configuration config-adds
 
     node 'localhost'
     {
-
-        WindowsFeature 'ADDS'
-        {
+        
+        WindowsFeature 'ADDS' {
             Name   = 'AD-Domain-Services'
             Ensure = 'Present'
         }
 
-        WindowsFeature 'RSAT-AD-PowerShell'
-        {
+        WindowsFeature 'RSAT-AD-PowerShell' {
             Name   = 'RSAT-AD-PowerShell'
             Ensure = 'Present'
         }
 
-        WindowsFeature 'RSAT-AD-Tools'
-        {
+        WindowsFeature 'RSAT-AD-Tools' {
             Name   = 'RSAT-AD-Tools'
             Ensure = 'Present'
         }
 
-        ADDomain 'contoso.com'
-        {
+        ADDomain 'contoso.com' {
             DomainName                    = 'contoso.com'
             Credential                    = $Credential
             SafemodeAdministratorPassword = $Credential
             ForestMode                    = 'WinThreshold'
         }
 
-        WaitForADDomain 'contoso.com'
-        {
-            DomainName           = 'contoso.com'
-            RestartCount         = 2
+        WaitForADDomain 'contoso.com' {
+            DomainName   = 'contoso.com'
+            RestartCount = 2
 
         }
 
-        ADOrganizationalUnit 'ADSyncOU'
-        {
-            DependsOn                       = '[WaitForADDomain]contoso.com'
-            Name                            = 'AAD Sync Users'
-            Path                            = 'DC=contoso,DC=com'
-            Ensure                          = 'Present'
+        ADOrganizationalUnit 'ADSyncOU' {
+            DependsOn = '[WaitForADDomain]contoso.com'
+            Name      = 'AAD Sync Users'
+            Path      = 'DC=contoso,DC=com'
+            Ensure    = 'Present'
         }
 
-        ADUser 'Contoso\DeliaCec'
-        {
+        ADUser 'Contoso\DeliaCec' {
             DependsOn           = '[ADOrganizationalUnit]ADSyncOU'
             Ensure              = 'Present'
             UserName            = 'DeliaCec'
@@ -70,8 +76,7 @@ Configuration config-adds
             Path                = 'OU=AAD Sync Users,DC=contoso,DC=com'
         }
 
-        ADUser 'Contoso\CopenAnn' 
-        {
+        ADUser 'Contoso\CopenAnn' {
             DependsOn           = '[ADOrganizationalUnit]ADSyncOU'
             Ensure              = 'Present'
             UserName            = 'CopenAnn'
@@ -86,8 +91,7 @@ Configuration config-adds
             Path                = 'OU=AAD Sync Users,DC=contoso,DC=com'
         }
 
-        ADUser 'Contoso\LivseAug' 
-        {
+        ADUser 'Contoso\LivseAug' {
             DependsOn           = '[ADOrganizationalUnit]ADSyncOU'
             Ensure              = 'Present'
             UserName            = 'LivseAug'
@@ -102,8 +106,7 @@ Configuration config-adds
             Path                = 'OU=AAD Sync Users,DC=contoso,DC=com'
         }
 
-        ADUser 'Contoso\CardoJer'
-        {
+        ADUser 'Contoso\CardoJer' {
             DependsOn           = '[ADOrganizationalUnit]ADSyncOU'
             Ensure              = 'Present'
             UserName            = 'CardoJer'
@@ -118,8 +121,7 @@ Configuration config-adds
             Path                = 'OU=AAD Sync Users,DC=contoso,DC=com'
         }
 
-        ADUser 'Contoso\EdlinSop' 
-        {
+        ADUser 'Contoso\EdlinSop' {
             DependsOn           = '[ADOrganizationalUnit]ADSyncOU'
             Ensure              = 'Present'
             UserName            = 'EdlinSop'
@@ -134,8 +136,7 @@ Configuration config-adds
             Path                = 'OU=AAD Sync Users,DC=contoso,DC=com'
         }
 
-        ADUser 'Contoso\MaderKei' 
-        {
+        ADUser 'Contoso\MaderKei' {
             DependsOn           = '[ADOrganizationalUnit]ADSyncOU'
             Ensure              = 'Present'
             UserName            = 'MaderKei'
@@ -150,8 +151,7 @@ Configuration config-adds
             Path                = 'OU=AAD Sync Users,DC=contoso,DC=com'
         }
 
-        ADUser 'Contoso\FullaSue' 
-        {
+        ADUser 'Contoso\FullaSue' {
             DependsOn           = '[ADOrganizationalUnit]ADSyncOU'
             Ensure              = 'Present'
             UserName            = 'FullaSue'
@@ -166,8 +166,7 @@ Configuration config-adds
             Path                = 'OU=AAD Sync Users,DC=contoso,DC=com'
         }
 
-        ADUser 'Contoso\WinkeAni' 
-        {
+        ADUser 'Contoso\WinkeAni' {
             DependsOn           = '[ADOrganizationalUnit]ADSyncOU'
             Ensure              = 'Present'
             UserName            = 'WinkeAni'
@@ -182,8 +181,7 @@ Configuration config-adds
             Path                = 'OU=AAD Sync Users,DC=contoso,DC=com'
         }
 
-        ADUser 'Contoso\RodarRic' 
-        {
+        ADUser 'Contoso\RodarRic' {
             DependsOn           = '[ADOrganizationalUnit]ADSyncOU'
             Ensure              = 'Present'
             UserName            = 'RodarRic'
@@ -198,8 +196,7 @@ Configuration config-adds
             Path                = 'OU=AAD Sync Users,DC=contoso,DC=com'
         }
 
-        ADUser 'Contoso\DemarMeg' 
-        {
+        ADUser 'Contoso\DemarMeg' {
             DependsOn           = '[ADOrganizationalUnit]ADSyncOU'
             Ensure              = 'Present'
             UserName            = 'DemarMeg'
@@ -215,3 +212,14 @@ Configuration config-adds
         }
     }
 }
+$cd = @{
+    AllNodes = @(
+        @{
+            NodeName                    = 'localhost'
+            PSDscAllowPlainTextPassword = $true #for testing only
+        }
+    )
+}
+
+config-adds -Credential (Get-Credential) -ConfigurationData $cd
+Start-DscConfiguration -Path C:\Users\Administrator\config-adds -Verbose -Wait -Force

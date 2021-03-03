@@ -166,6 +166,9 @@
                         "url": "https://github.com/kingwil/home/raw/master/ADDS%20DSC%20Automation%20Account/adds/config-adds.ps1.zip",
                         "script": "config-adds.ps1",
                         "function": "config-adds"
+                    },
+                    "configurationArguments": {
+                        "RebootNodeIfNeeded": true
                     }
                 },
                 "protectedSettings": {
