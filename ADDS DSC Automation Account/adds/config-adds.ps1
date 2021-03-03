@@ -12,11 +12,6 @@ Configuration config-adds
 
     node 'localhost'
     {
-        LocalConfigurationManager 
-        {
-            RebootNodeIfNeeded = $true
-        }
-
         WindowsFeature 'ADDS'
         {
             Name   = 'AD-Domain-Services'
