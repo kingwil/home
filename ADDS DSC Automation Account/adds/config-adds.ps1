@@ -23,13 +23,13 @@ Configuration config-adds
             Ensure = 'Present'
         }
 
-        WindowsFeature 'RSAT'
+        WindowsFeature 'RSAT-AD-PowerShell'
         {
             Name   = 'RSAT-AD-PowerShell'
             Ensure = 'Present'
         }
 
-        WindowsFeature 'RSAT'
+        WindowsFeature 'RSAT-RSAT-AD-Tools'
         {
             Name   = 'RSAT-AD-Tools'
             Ensure = 'Present'
