@@ -9,10 +9,14 @@ Configuration config-adds
 
     Import-DscResource -ModuleName PSDesiredStateConfiguration
     Import-DscResource -ModuleName ActiveDirectoryDsc
-    Import-DscResource -ModuleName ComputerManagementDsc
 
     node 'localhost'
     {
+        LocalConfigurationManager 
+        {
+            RebootNodeIfNeeded = $true
+        }
+
         WindowsFeature 'ADDS'
         {
             Name   = 'AD-Domain-Services'
@@ -22,6 +26,12 @@ Configuration config-adds
         WindowsFeature 'RSAT'
         {
             Name   = 'RSAT-AD-PowerShell'
+            Ensure = 'Present'
+        }
+
+        WindowsFeature 'RSAT'
+        {
+            Name   = 'RSAT-AD-Tools'
             Ensure = 'Present'
         }
 
@@ -207,11 +217,5 @@ Configuration config-adds
             DomainName          = 'contoso.com'
             Path                = 'OU=AAD Sync Users,DC=contoso,DC=com'
         }
-
-        PendingReboot RebootAfterDomainJoin
-        {
-            Name = 'DomainJoin'
-        }
-
     }
 }
