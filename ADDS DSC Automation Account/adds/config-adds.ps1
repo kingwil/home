@@ -12,6 +12,11 @@ Configuration config-adds
 
     node 'localhost'
     {
+        LocalConfigurationManager
+        {
+            RebootNodeIfNeeded = $true
+            ActionAfterReboot = 'ContinueConfiguration'
+        }
 
         WindowsFeature 'ADDS'
         {
