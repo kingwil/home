@@ -29,12 +29,6 @@ Configuration config-adds
             Ensure = 'Present'
         }
 
-        WindowsFeature 'RSAT-AD-Tools'
-        {
-            Name   = 'RSAT-AD-Tools'
-            Ensure = 'Present'
-        }
-
         ADDomain 'contoso.com'
         {
             DomainName                    = 'contoso.com'
