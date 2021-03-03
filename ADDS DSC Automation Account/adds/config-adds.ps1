@@ -29,7 +29,7 @@ Configuration config-adds
             Ensure = 'Present'
         }
 
-        WindowsFeature 'RSAT-RSAT-AD-Tools'
+        WindowsFeature 'RSAT-AD-Tools'
         {
             Name   = 'RSAT-AD-Tools'
             Ensure = 'Present'
