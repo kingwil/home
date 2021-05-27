@@ -1,0 +1,67 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {},
+    "variables": {
+        "vmName": "Srv-DC1"
+    },
+    "resources": [
+        {
+            "name": "[variables('vmName')]",
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2019-07-01",
+            "comments": "VM We will use",
+            "properties": {},
+            "location": "[resourceGroup().location]",
+            "resources": [
+                {
+                    "name": "LocalConfigManager",
+                    "type": "extensions",
+                    "apiVersion": "2019-07-01",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Compute/virtualMachines', variables('vmName'))]"
+                    ],
+                    "properties": {
+                        "publisher": "Microsoft.Powershell",
+                        "type": "DSC",
+                        "typeHandlerVersion": "2.83",
+                        "autoUpgradeMinorVersion": true,
+                        "settings": {
+                            "configuration": {
+                                "url": "https://wklab.blob.core.windows.net/windows-powershell-dsc/LCMConfig.ps1.zip",
+                                "script": "LCMConfig.ps1",
+                                "function": "LCMConfig"
+                            }
+                        },
+                        "protectedSettings": {}
+                    }
+                },
+                {
+                    "name": "CreateForest",
+                    "type": "extensions",
+                    "apiVersion": "2019-07-01",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Compute/virtualMachines', variables('vmName'))]",
+                        "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'), '/Extensions/LocalConfigManager')]"
+                    ],
+                    "properties": {
+                        "publisher": "Microsoft.Powershell",
+                        "type": "DSC",
+                        "typeHandlerVersion": "2.83",
+                        "autoUpgradeMinorVersion": true,
+                        "settings": {
+                            "configuration": {
+                                "url": "https://wklab.blob.core.windows.net/windows-powershell-dsc/config-adds.ps1.zip",
+                                "script": "config-adds.ps1",
+                                "function": "config-adds"
+                            }
+                        },
+                        "protectedSettings": {}
+                    }
+                }
+            ]
+        }
+    ]
+}
