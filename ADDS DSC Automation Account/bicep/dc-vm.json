@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.3.539.46024",
-      "templateHash": "12820257078227985953"
+      "templateHash": "9911645343596221125"
     }
   },
   "parameters": {
@@ -153,6 +153,27 @@
     {
       "type": "Microsoft.Compute/virtualMachines/extensions",
       "apiVersion": "2020-12-01",
+      "name": "[format('{0}/Microsoft.Powershell', variables('vm_dc1_name'))]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "publisher": "Microsoft.Compute",
+        "type": "CustomScriptExtension",
+        "typeHandlerVersion": "1.9",
+        "autoUpgradeMinorVersion": true,
+        "settings": {
+          "fileUris": [
+            "https://raw.githubusercontent.com/kingwil/home/master/ADDS%20DSC%20Automation%20Account/adds/Enable_RebootIfNeededLCM.ps1"
+          ],
+          "commandToExecute": "powershell -ExecutionPolicy Unrestricted -File Enable_RebootIfNeededLCM.ps1"
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Compute/virtualMachines', variables('vm_dc1_name'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "apiVersion": "2020-12-01",
       "name": "[format('{0}/Microsoft.Powershell.DSC', variables('vm_dc1_name'))]",
       "location": "[resourceGroup().location]",
       "properties": {
@@ -180,7 +201,8 @@
         }
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Compute/virtualMachines', variables('vm_dc1_name'))]"
+        "[resourceId('Microsoft.Compute/virtualMachines', variables('vm_dc1_name'))]",
+        "[resourceId('Microsoft.Compute/virtualMachines/extensions', split(format('{0}/Microsoft.Powershell', variables('vm_dc1_name')), '/')[0], split(format('{0}/Microsoft.Powershell', variables('vm_dc1_name')), '/')[1])]"
       ]
     },
     {

@@ -120,8 +120,28 @@ resource vm_dc1_resource 'Microsoft.Compute/virtualMachines@2019-07-01' = {
   }
 }
 
-resource dc1_dsc_extension_resource 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = {
+resource vm_dc1_script_extension_resource 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = {
+  name: '${vm_dc1_resource.name}/Microsoft.Powershell'
+  location: resourceGroup().location
+  properties: {
+    publisher: 'Microsoft.Compute'
+    type: 'CustomScriptExtension'
+    typeHandlerVersion: '1.9'
+    autoUpgradeMinorVersion: true
+    settings:{
+      fileUris: [
+        'https://raw.githubusercontent.com/kingwil/home/master/ADDS%20DSC%20Automation%20Account/adds/Enable_RebootIfNeededLCM.ps1'
+        ]
+        commandToExecute: 'powershell -ExecutionPolicy Unrestricted -File Enable_RebootIfNeededLCM.ps1'
+    }
+  }
+}
+
+resource vm_dc1_dsc_extension_resource 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = {
   name: '${vm_dc1_resource.name}/Microsoft.Powershell.DSC'
+  dependsOn: [
+    vm_dc1_script_extension_resource
+  ]
   location: resourceGroup().location
   properties: {
     publisher: 'Microsoft.Powershell'
@@ -133,9 +153,6 @@ resource dc1_dsc_extension_resource 'Microsoft.Compute/virtualMachines/extension
         url: 'https://github.com/kingwil/home/raw/master/ADDS%20DSC%20Automation%20Account/adds/config-adds.ps1.zip'
         script: 'config-adds.ps1'
         function: 'config-adds'
-      }
-      configurationArguments: {
-        RebootNodeIfNeeded: true
       }
     }
     protectedSettings: {
