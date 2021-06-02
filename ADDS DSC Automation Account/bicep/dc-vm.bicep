@@ -122,6 +122,9 @@ resource vm_dc1_resource 'Microsoft.Compute/virtualMachines@2019-07-01' = {
 
 resource vm_dc1_script_extension_resource 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = {
   name: '${vm_dc1_resource.name}/Microsoft.Powershell'
+  dependsOn: [
+    vm_dc1_resource
+  ]
   location: resourceGroup().location
   properties: {
     publisher: 'Microsoft.Compute'
