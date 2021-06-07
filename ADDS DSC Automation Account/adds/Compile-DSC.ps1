@@ -1,0 +1,1 @@
+Publish-AzVMDscConfiguration -ConfigurationPath .\config-adds-wmf4.ps1 -OutputArchivePath .\config-adds-wmf4.ps1.zip

@@ -9,6 +9,7 @@ Configuration config-adds-wmf4
 
     Import-DscResource -ModuleName PSDesiredStateConfiguration
     Import-DscResource -ModuleName ActiveDirectoryDsc
+    Import-DscResource -ModuleName ComputerManagementDsc
 
     node 'localhost'
     {
@@ -42,6 +43,12 @@ Configuration config-adds-wmf4
             Credential                    = $Credential
             SafemodeAdministratorPassword = $Credential
             ForestMode                    = 'WinThreshold'
+        }
+
+        PendingReboot RebootAfterInstallingAD
+        {
+            Name = 'AfterInstallingAD'
+            DependsOn = "[ADDomain]contoso.com"
         }
 
         WaitForADDomain 'contoso.com'
