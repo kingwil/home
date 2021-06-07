@@ -14,7 +14,6 @@ var vnet_name = 'test-vnet'
 var pip_name = 'bastion-pip'
 var subnet_name = 'tier0-subnet'
 var dc_ip = '10.0.2.5'
-var nsg_name = 'tier0-nsg'
 var bastion_name = 'xdr-bastion'
 
 resource pip_resource 'Microsoft.Network/publicIPAddresses@2020-11-01' = {
@@ -33,16 +32,12 @@ resource subnet_resource 'Microsoft.Network/virtualNetworks/subnets@2020-04-01' 
   name: '${vnet_resource.name}/${subnet_name}'
   dependsOn: [
     vnet_resource
-    nsg_resource
   ]
   properties: {
     addressPrefix: '10.0.2.0/24'
     delegations: []
     privateEndpointNetworkPolicies: 'Enabled'
     privateLinkServiceNetworkPolicies: 'Enabled'
-    networkSecurityGroup: {
-      id: nsg_resource.id
-    }
   }
 }
 
@@ -120,30 +115,10 @@ resource vm_dc1_resource 'Microsoft.Compute/virtualMachines@2019-07-01' = {
   }
 }
 
-resource vm_dc1_script_extension_resource 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = {
-  name: '${vm_dc1_resource.name}/Microsoft.Powershell'
-  dependsOn: [
-    vm_dc1_resource
-  ]
-  location: resourceGroup().location
-  properties: {
-    publisher: 'Microsoft.Compute'
-    type: 'CustomScriptExtension'
-    typeHandlerVersion: '1.9'
-    autoUpgradeMinorVersion: true
-    settings:{
-      fileUris: [
-        'https://raw.githubusercontent.com/kingwil/home/master/ADDS%20DSC%20Automation%20Account/adds/Enable_RebootIfNeededLCM.ps1'
-        ]
-        commandToExecute: 'powershell -ExecutionPolicy Unrestricted -File Enable_RebootIfNeededLCM.ps1'
-    }
-  }
-}
-
 resource vm_dc1_dsc_extension_resource 'Microsoft.Compute/virtualMachines/extensions@2020-12-01' = {
   name: '${vm_dc1_resource.name}/Microsoft.Powershell.DSC'
   dependsOn: [
-    vm_dc1_script_extension_resource
+    vm_dc1_resource
   ]
   location: resourceGroup().location
   properties: {
@@ -156,6 +131,9 @@ resource vm_dc1_dsc_extension_resource 'Microsoft.Compute/virtualMachines/extens
         url: 'https://github.com/kingwil/home/raw/master/ADDS%20DSC%20Automation%20Account/adds/config-adds.ps1.zip'
         script: 'config-adds.ps1'
         function: 'config-adds'
+      }
+      properties: {
+        value: 'RebootNodeIfNeeded=true'
       }
     }
     protectedSettings: {
@@ -180,28 +158,6 @@ resource vnet_resource 'Microsoft.Network/virtualNetworks@2020-04-01' = {
     }
   }
   dependsOn: []
-}
-
-resource nsg_resource 'Microsoft.Network/networkSecurityGroups@2020-11-01' = {
-  name: nsg_name
-  location: resourceGroup().location
-  properties: {
-    securityRules: [
-      {
-        name: 'ALLOW-RDP'
-        properties: {
-          protocol: 'Tcp'
-          sourcePortRange: '*'
-          sourceAddressPrefix: '*'
-          destinationPortRange: '3389'
-          destinationAddressPrefix: dc_ip
-          access: 'Allow'
-          priority: 1234
-          direction: 'Inbound'
-        }
-      }
-    ]
-  }
 }
 
 resource subnet_bastion_resource 'Microsoft.Network/virtualNetworks/subnets@2020-04-01' = {
