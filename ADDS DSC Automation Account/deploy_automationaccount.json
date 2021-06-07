@@ -42,11 +42,7 @@
             ],
             "properties": {
                 "contentLink": {
-                    "uri": "https://azurewk.blob.core.windows.net/public/activedirectorydsc.6.0.1.nupkg",
-                    "contentHash": {
-                        "algorithm": "SHA256",
-                        "value": "147CF0518A6413649C9E269DD63450299682934AE971BD5CD3DCC3EAA37A8814"
-                    }
+                    "uri": "https://azurewk.blob.core.windows.net/public/activedirectorydsc.6.0.1.nupkg"
                 }
             }
         },
@@ -63,7 +59,7 @@
             }
         },
         {
-            "name": "[concat(parameters('automationAccount'), '/config-adds')]",
+            "name": "[concat(parameters('automationAccount'), '/config-adds-wmf4')]",
             "type": "Microsoft.Automation/automationAccounts/configurations",
             "apiVersion": "2015-10-31",
             "location": "[resourceGroup().location]",
@@ -73,11 +69,7 @@
             "properties": {
                 "source": {
                     "type": "uri",
-                    "value": "https://azurewk.blob.core.windows.net/public/config-adds.ps1",
-                    "hash": {
-                        "algorithm": "SHA256",
-                        "value": "02E5A4E831EFB3603CDC6F3BFE8D1BB7D28BDF5E7E06EC48166539A1AEB41976"
-                    }
+                    "value": "https://azurewk.blob.core.windows.net/public/config-adds-wmf4.ps1"
                 }
             }
         },
@@ -88,11 +80,11 @@
             "dependsOn": [
                 "ActiveDirectoryDsc",
                 "Credential",
-                "config-adds"
+                "config-adds-wmf4"
             ],
             "properties": {
                 "configuration": {
-                    "name": "config-adds"
+                    "name": "config-adds-wmf4"
                 }
             }
         }
